@@ -3,50 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أداة قص الكليبات</title>
+    <title>SXB ISLAND 2 - قص الكليبات</title>
+    <!-- استيراد الخطوط (تاجوال للعربي، وسينزل للإنجليزي الكلاسيكي) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Tajawal:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        h2 { margin-bottom: 20px; color: #333; }
-        .form-group { margin-bottom: 15px; text-align: right; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { background: #007bff; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; margin-top: 10px; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
-        .message { margin-top: 15px; font-size: 14px; display: none; padding: 10px; border-radius: 5px; }
-        .error { background: #ffe6e6; color: #d9534f; border: 1px solid #d9534f; }
-        .success { background: #dff0d8; color: #3c763d; border: 1px solid #3c763d; }
+        body {
+            margin: 0;
+            padding: 0;
+            /* خلفية متدرجة من الأحمر الداكن للأسود لتطابق التصميم */
+            background: radial-gradient(circle at 70% 50%, #7a0000 0%, #150000 60%, #000000 100%);
+            font-family: 'Tajawal', sans-serif;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* الحاوية الرئيسية لتقسيم الشاشة لقسمين */
+        .page-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 60px;
+            width: 90%;
+            max-width: 1000px;
+        }
+
+        /* ----- تصميم المربع الأسود (نموذج القص) ----- */
+        .form-container {
+            background-color: #000000;
+            border-radius: 25px;
+            padding: 40px;
+            width: 100%;
+            max-width: 380px;
+            /* توهج أحمر خفيف خلف المربع */
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.15);
+            border: 1px solid #1a0000;
+        }
+
+        .header-titles {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header-titles h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .header-titles h2 {
+            margin: 0;
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+
+        .input-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .input-row label {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        /* أزرار اختيار الحلقة */
+        .episodes-container {
+            display: flex;
+            gap: 10px;
+            direction: ltr; /* لترتيب الحلقات 1, 2, 3.. */
+        }
+
+        .ep-btn {
+            background-color: transparent;
+            border: 1px solid #550000;
+            color: white;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .ep-btn:hover {
+            background-color: #2a0000;
+        }
+
+        .ep-btn.active {
+            background-color: #7a0000;
+            border-color: #ff0000;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+        }
+
+        /* حقول الوقت المخصصة */
+        .time-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            direction: ltr;
+            background-color: #111111;
+            border: 1px solid #550000;
+            border-radius: 10px;
+            padding: 8px 15px;
+            width: 140px;
+        }
+
+        .time-wrapper input {
+            width: 30px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-family: monospace;
+            text-align: center;
+            outline: none;
+        }
+        
+        .time-wrapper input::placeholder {
+            color: #666;
+        }
+
+        .time-wrapper span {
+            color: #888;
+            font-weight: bold;
+            margin: 0 2px;
+        }
+
+        /* زر القص الأخضر */
+        .submit-btn {
+            background-color: #26d367; /* لون أخضر ساطع */
+            color: #000;
+            border: none;
+            border-radius: 30px;
+            padding: 12px 40px;
+            font-size: 18px;
+            font-weight: 900;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto 0;
+            transition: all 0.3s ease;
+            width: 80%;
+        }
+
+        .submit-btn:disabled {
+            background-color: #444;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        .submit-btn:not(:disabled):hover {
+            transform: scale(1.05);
+            background-color: #20b858;
+        }
+
+        /* رسائل التنبيه والخطأ (تم تعديل ألوانها لتناسب الثيم الداكن) */
+        .message { margin-top: 20px; font-size: 14px; display: none; padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; }
+        .error { background: #330000; color: #ff6666; border: 1px solid #ff0000; }
+        .success { background: #003311; color: #66ff99; border: 1px solid #00ff55; }
+
+        /* ----- تصميم الشعار الجانبي (SXB ISLAND2) ----- */
+        .logo-container {
+            text-align: center;
+        }
+
+        .logo-text {
+            font-family: 'Cinzel', serif;
+            color: #fce268; /* لون ذهبي */
+            line-height: 0.9;
+            text-shadow: 
+                2px 2px 0 #3a0000, 
+                -1px -1px 0 #3a0000, 
+                1px -1px 0 #3a0000, 
+                -1px 1px 0 #3a0000, 
+                1px 1px 0 #3a0000,
+                0px 10px 20px rgba(0,0,0,0.8);
+        }
+
+        .logo-sxb {
+            font-size: 100px;
+            font-weight: 700;
+            display: block;
+            letter-spacing: 5px;
+        }
+
+        .logo-island {
+            font-size: 80px;
+            font-weight: 700;
+            display: block;
+        }
+
+        /* تحسينات للجوال */
+        @media (max-width: 768px) {
+            .page-wrapper { flex-direction: column-reverse; gap: 30px; }
+            .logo-sxb { font-size: 70px; }
+            .logo-island { font-size: 55px; }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>قص وتنزيل كليب</h2>
-    
-    <div class="form-group">
-        <label>رقم الحلقة:</label>
-        <select id="episodeSelect">
-            <option value="">اختر الحلقة...</option>
-            <option value="1">الحلقة 1</option>
-            <option value="2">الحلقة 2</option>
-            <option value="3">الحلقة 3</option>
-            <option value="4">الحلقة 4</option>
-            <option value="5">الحلقة 5</option>
-        </select>
+<div class="page-wrapper">
+    <!-- المربع الأسود للقص -->
+    <div class="form-container">
+        <div class="header-titles">
+            <h1>قص وتنزيل اللقطات</h1>
+            <h2>clip maker</h2>
+        </div>
+        
+        <!-- صف اختيار الحلقة -->
+        <div class="input-row">
+            <label>اختر الحلقة:</label>
+            <div class="episodes-container">
+                <button class="ep-btn" data-val="2">الحلقة<br>2</button>
+                <button class="ep-btn" data-val="3">الحلقة<br>3</button>
+                <button class="ep-btn" data-val="4">الحلقة<br>4</button>
+                <button class="ep-btn" data-val="5">الحلقة<br>5</button>
+            </div>
+        </div>
+
+        <!-- صف وقت البداية -->
+        <div class="input-row">
+            <label>وقت بداية الكليب:</label>
+            <div class="time-wrapper">
+                <input type="text" id="start-h" placeholder="--" inputmode="numeric" maxlength="2">
+                <span>:</span>
+                <input type="text" id="start-m" placeholder="--" inputmode="numeric" maxlength="2">
+                <span>:</span>
+                <input type="text" id="start-s" placeholder="--" inputmode="numeric" maxlength="2">
+            </div>
+        </div>
+
+        <!-- صف وقت النهاية -->
+        <div class="input-row">
+            <label>وقت نهاية الكليب:</label>
+            <div class="time-wrapper">
+                <input type="text" id="end-h" placeholder="--" inputmode="numeric" maxlength="2">
+                <span>:</span>
+                <input type="text" id="end-m" placeholder="--" inputmode="numeric" maxlength="2">
+                <span>:</span>
+                <input type="text" id="end-s" placeholder="--" inputmode="numeric" maxlength="2">
+            </div>
+        </div>
+
+        <button id="clipBtn" class="submit-btn" disabled>قص وتنزيل</button>
+        <div id="statusMessage" class="message"></div>
     </div>
 
-    <div class="form-group">
-        <label>وقت البداية (مثال 01:01:33):</label>
-        <input type="text" id="startTime" placeholder="HH:MM:SS">
+    <!-- الشعار الجانبي -->
+    <div class="logo-container">
+        <div class="logo-text">
+            <span class="logo-sxb">SXB</span>
+            <span class="logo-island">ISLAND2</span>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label>وقت النهاية (مثال 01:02:28):</label>
-        <input type="text" id="endTime" placeholder="HH:MM:SS">
-    </div>
-
-    <button id="clipBtn" disabled>قص وصنع الكليب</button>
-    <div id="statusMessage" class="message"></div>
 </div>
 
 <script>
@@ -58,17 +281,39 @@
         "5": { durationText: "01:15:30", durationSec: 4530 }
     };
 
-    const episodeSelect = document.getElementById('episodeSelect');
-    const startTimeInput = document.getElementById('startTime');
-    const endTimeInput = document.getElementById('endTime');
+    let selectedEpisode = null;
     const clipBtn = document.getElementById('clipBtn');
     const statusMessage = document.getElementById('statusMessage');
 
-    function timeToSeconds(timeStr) {
-        const parts = timeStr.split(':').map(Number);
-        if (parts.length === 3) return (parts[0] * 3600) + (parts[1] * 60) + parts[2];
-        if (parts.length === 2) return (parts[0] * 60) + parts[1];
-        return -1;
+    // منطق اختيار الحلقة بالأزرار
+    document.querySelectorAll('.ep-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            selectedEpisode = this.dataset.val;
+            validateInputs();
+        });
+    });
+
+    // دوال مساعدة للوقت
+    function getSeconds(hId, mId, sId) {
+        let h = parseInt(document.getElementById(hId).value) || 0;
+        let m = parseInt(document.getElementById(mId).value) || 0;
+        let s = parseInt(document.getElementById(sId).value) || 0;
+        return (h * 3600) + (m * 60) + s;
+    }
+
+    function getFormattedTime(hId, mId, sId) {
+        let h = document.getElementById(hId).value || "00";
+        let m = document.getElementById(mId).value || "00";
+        let s = document.getElementById(sId).value || "00";
+        return `${h.padStart(2, '0')}:${m.padStart(2, '0')}:${s.padStart(2, '0')}`;
+    }
+
+    function hasAnyValue(hId, mId, sId) {
+        return document.getElementById(hId).value !== '' || 
+               document.getElementById(mId).value !== '' || 
+               document.getElementById(sId).value !== '';
     }
 
     function showMessage(msg, isError = true) {
@@ -81,28 +326,20 @@
         statusMessage.style.display = 'none';
         clipBtn.disabled = true;
 
-        const epId = episodeSelect.value;
-        const startVal = startTimeInput.value.trim();
-        const endVal = endTimeInput.value.trim();
-
-        if (!epId || !startVal || !endVal) return;
-
-        const timeRegex = /^(?:(?:[0-1][0-9]|2[0-3]):)?(?:[0-5][0-9]):(?:[0-5][0-9])$/;
-        if (!timeRegex.test(startVal) || !timeRegex.test(endVal)) {
-            showMessage("الرجاء إدخال الوقت بصيغة صحيحة مثل 01:01:33");
+        if (!selectedEpisode || !hasAnyValue('start-h', 'start-m', 'start-s') || !hasAnyValue('end-h', 'end-m', 'end-s')) {
             return;
         }
 
-        const startSec = timeToSeconds(startVal);
-        const endSec = timeToSeconds(endVal);
+        const startSec = getSeconds('start-h', 'start-m', 'start-s');
+        const endSec = getSeconds('end-h', 'end-m', 'end-s');
 
         if (startSec >= endSec) {
             showMessage("وقت النهاية يجب أن يكون أكبر من وقت البداية.");
             return;
         }
 
-        if (endSec > episodesData[epId].durationSec) {
-            showMessage(`عذراً، مدة الحلقة هي ${episodesData[epId].durationText}. الوقت غير متوفر.`);
+        if (endSec > episodesData[selectedEpisode].durationSec) {
+            showMessage(`عذراً، مدة الحلقة هي ${episodesData[selectedEpisode].durationText}. الوقت غير متوفر.`);
             return;
         }
 
@@ -115,28 +352,44 @@
         clipBtn.disabled = false;
     }
 
-    episodeSelect.addEventListener('change', validateInputs);
-    startTimeInput.addEventListener('input', validateInputs);
-    endTimeInput.addEventListener('input', validateInputs);
+    // إجبار المستخدم على إدخال أرقام فقط وتنسيقها
+    document.querySelectorAll('.time-wrapper input').forEach(input => {
+        input.addEventListener('input', function() {
+            // مسح أي حروف والاحتفاظ بالأرقام فقط
+            this.value = this.value.replace(/[^0-9]/g, '');
+            validateInputs();
+        });
+        
+        input.addEventListener('change', function() {
+            if (this.value !== '' && this.value >= 0) {
+                this.value = this.value.padStart(2, '0');
+            }
+            validateInputs();
+        });
+    });
 
+    // إرسال الطلب للسيرفر
     clipBtn.addEventListener('click', async () => {
         clipBtn.disabled = true;
         showMessage("جاري المعالجة والقص... يرجى الانتظار", false);
-        statusMessage.style.color = '#007bff';
-        statusMessage.style.borderColor = '#007bff';
-        statusMessage.style.backgroundColor = '#e6f2ff';
+        statusMessage.style.color = '#fff';
+        statusMessage.style.borderColor = '#1edd6e';
+        statusMessage.style.backgroundColor = '#004411';
 
         try {
-            // ضع رابط Google Cloud Run هنا بعد رفعه
-            const SERVER_URL = 'video-clipper-backend-production-d460.up.railway.app/clip'; 
+            // ★ لا تنسَ تحديث هذا الرابط برابط Railway الخاص بك ★
+            const SERVER_URL = 'https://video-clipper-backend-production-d460.up.railway.app/clip'; 
             
+            const finalStartTime = getFormattedTime('start-h', 'start-m', 'start-s');
+            const finalEndTime = getFormattedTime('end-h', 'end-m', 'end-s');
+
             const response = await fetch(SERVER_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    episode: episodeSelect.value,
-                    startTime: startTimeInput.value,
-                    endTime: endTimeInput.value
+                    episode: selectedEpisode,
+                    startTime: finalStartTime,
+                    endTime: finalEndTime
                 })
             });
 
@@ -149,11 +402,11 @@
             const downloadUrl = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = downloadUrl;
-            a.download = `clip_ep${episodeSelect.value}_${startTimeInput.value.replace(/:/g, '')}.mp4`;
+            a.download = `clip_ep${selectedEpisode}_${finalStartTime.replace(/:/g, '')}.mp4`;
             document.body.appendChild(a);
             a.click();
             a.remove();
-            window.URL.revokeObjectURL(downloadUrl); // تفريغ الذاكرة
+            window.URL.revokeObjectURL(downloadUrl); 
 
             showMessage("تم التنزيل بنجاح!", false);
             clipBtn.disabled = false;
